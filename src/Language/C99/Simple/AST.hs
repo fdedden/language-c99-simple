@@ -142,4 +142,4 @@ data AssignOp = Assign
               | AssignXOr
               | AssignOr
 
-data TypeName -- TODO
+data TypeName = TypeName Type
