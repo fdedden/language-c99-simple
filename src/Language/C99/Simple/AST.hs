@@ -66,7 +66,7 @@ data TypeSpec = Void
 
               | Long_Long
               | Signed_Long_Long
-              | Long_Long_int
+              | Long_Long_Int
               | Signed_Long_Long_Int
 
               | Unsigned_Long_Long
