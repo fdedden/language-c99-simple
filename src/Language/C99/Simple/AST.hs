@@ -81,7 +81,12 @@ data TypeSpec = Void
               | Long_Double_Complex
               | TypedefName Ident
 
-data Init -- TODO
+              | Struct      Ident
+              | StructDecln (Maybe Ident) [FieldDecln]
+
+data FieldDecln = FieldDecln Type Ident
+
+data Init = Init -- TODO
 
 data Expr = Ident     Ident
           | LitInt    Integer
