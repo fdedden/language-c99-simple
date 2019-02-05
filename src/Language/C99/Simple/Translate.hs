@@ -21,7 +21,11 @@ transfundef :: FunDef -> C.FunDef
 transfundef = undefined -- TODO
 
 transdecln :: Decln -> C.Decln
-transdecln (Decln storespec ty name init) = undefined
+transdecln (Decln storespec ty name init) = C.Decln dspecs dlist where
+  dspecs = getdeclnspecs ty
+  dlist  = Just $ C.InitDeclrBase $ C.InitDeclrInitr declr init'
+  declr = execState (getdeclr ty) (identdeclr name)
+  init' = transinit init
 
 
 getdeclr :: Type -> State C.Declr ()
