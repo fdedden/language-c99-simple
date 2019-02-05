@@ -86,7 +86,8 @@ data TypeSpec = Void
 
 data FieldDecln = FieldDecln Type Ident
 
-data Init = Init -- TODO
+data Init = InitExpr  Expr
+          | InitArray [Init]
 
 data Expr = Ident     Ident
           | LitInt    Integer
@@ -97,7 +98,7 @@ data Expr = Ident     Ident
           | Funcall Expr [Expr]
           | Dot     Expr Ident
           | Arrow   Expr Ident
-          | InitVal TypeName Init
+          | InitVal TypeName [Init]
 
           | UnaryOp UnaryOp Expr
 
