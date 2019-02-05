@@ -23,6 +23,7 @@ transfundef = undefined -- TODO
 transdecln :: Decln -> C.Decln
 transdecln (Decln storespec ty name init) = undefined
 
+
 getdeclr :: Type -> State C.Declr ()
 getdeclr ty = case ty of
   Type      ty'     -> do
@@ -48,15 +49,15 @@ getdeclr ty = case ty of
   Volatile ty' -> getdeclr ty'
 
 
-getdeclnspecs :: Type -> Maybe C.DeclnSpecs
+getdeclnspecs :: Type -> C.DeclnSpecs
 getdeclnspecs ty = case ty of
   Type     ty'   -> getdeclnspecs ty'
-  TypeSpec ty'   -> Just $ foldtypespecs $ spec2spec ty'
-  Ptr      ty'   -> getdeclnspecs (snd $ (gettypequals ty'))
+  TypeSpec ty'   -> foldtypespecs $ spec2spec ty'
+  Ptr      ty'   -> getdeclnspecs (snd $ gettypequals ty')
   Array    ty' _ -> getdeclnspecs ty'
-  Const    ty'   -> Just $ C.DeclnSpecsQual C.QConst    (getdeclnspecs ty')
-  Restrict ty'   -> Just $ C.DeclnSpecsQual C.QRestrict (getdeclnspecs ty')
-  Volatile ty'   -> Just $ C.DeclnSpecsQual C.QVolatile (getdeclnspecs ty')
+  Const    ty'   -> C.DeclnSpecsQual C.QConst    (Just $ getdeclnspecs ty')
+  Restrict ty'   -> C.DeclnSpecsQual C.QRestrict (Just $ getdeclnspecs ty')
+  Volatile ty'   -> C.DeclnSpecsQual C.QVolatile (Just $ getdeclnspecs ty')
 
 
 spec2spec :: TypeSpec -> [C.TypeSpec]
