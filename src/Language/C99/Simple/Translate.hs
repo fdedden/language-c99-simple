@@ -224,4 +224,33 @@ funcall fun args = C.PostfixFunction fun' args' where
   exprs :: [C.Expr]
   exprs = map transexpr args
 
+
 transtypename = undefined -- TODO
+
+
+getabstractdeclr :: Type -> State C.AbstractDeclr ()
+getabstractdeclr ty = case ty of
+  Type ty'    -> do
+    getabstractdeclr ty'
+    adeclr <- get
+    put $ C.AbstractDeclrDirect Nothing (C.DirectAbstractDeclr adeclr)
+
+  TypeSpec ts -> return ()
+
+  Ptr ty' -> do
+    let (quals, ty'') = gettypequals ty'
+    getabstractdeclr ty''
+    adeclr <- get
+    let ptr = C.PtrBase quals
+    put $ C.AbstractDeclrDirect (Just ptr) (C.DirectAbstractDeclr adeclr)
+
+  Array ty' len -> do
+    getabstractdeclr ty'
+    (C.AbstractDeclrDirect ptr adeclr) <- get
+    let len'     = (wrap.transexpr) <$> len
+        arrdeclr = C.DirectAbstractDeclrArray1 (Just adeclr) Nothing len'
+    put $ C.AbstractDeclrDirect ptr arrdeclr
+
+  Const    ty' -> getabstractdeclr ty'
+  Restrict ty' -> getabstractdeclr ty'
+  Volatile ty' -> getabstractdeclr ty'
