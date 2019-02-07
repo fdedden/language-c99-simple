@@ -149,3 +149,18 @@ data AssignOp = Assign
               | AssignOr
 
 data TypeName = TypeName Type
+
+data Case = Case    Expr Stmt
+          | Default      Stmt
+
+data Stmt = Expr     Expr
+          | If       Expr [Stmt]
+          | IfElse   Expr [Stmt] [Stmt]
+          | Switch   Expr [Case]
+          | While    Expr [Stmt]
+          | For      Expr Expr Expr [Stmt]
+          | ForInf   [Stmt]
+          | Continue
+          | Break
+          | Label    String Stmt
+          | Return   (Maybe Expr)
