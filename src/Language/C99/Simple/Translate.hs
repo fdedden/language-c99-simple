@@ -254,3 +254,68 @@ getabstractdeclr ty = case ty of
   Const    ty' -> getabstractdeclr ty'
   Restrict ty' -> getabstractdeclr ty'
   Volatile ty' -> getabstractdeclr ty'
+
+
+transstmt :: Stmt -> C.Stmt
+transstmt stmt = case stmt of
+  Expr    e                  -> exprstmt e
+  If      cond ss            -> ifstmt cond ss
+  IfElse  cond ssthen sselse -> ifelsestmt cond ssthen sselse
+  Switch  cond cases         -> switchstmt cond cases
+  While   cond ss            -> whilestmt cond ss
+  For     start end step ss  -> forstmt (Just start) (Just end) (Just step) ss
+  ForInf                 ss  -> forstmt Nothing      Nothing    Nothing     ss
+  Continue                   -> C.StmtJump $ C.JumpContinue
+  Break                      -> C.StmtJump $ C.JumpBreak
+  Label   name   s           -> labelstmt name s
+  Return  e                  -> returnstmt e
+
+exprstmt :: Expr -> C.Stmt
+exprstmt e = C.StmtExpr   $ C.ExprStmt (Just $ wrap $ transexpr e)
+
+ifstmt :: Expr -> [Stmt] -> C.Stmt
+ifstmt cond ss = C.StmtSelect $ C.SelectIf cond' body where
+  cond' = wrap $ transexpr cond
+  body  = compoundstmt ss
+
+ifelsestmt :: Expr -> [Stmt] -> [Stmt] -> C.Stmt
+ifelsestmt cond ssthen sselse =
+  C.StmtSelect $ C.SelectIfElse cond' ssthen' sselse' where
+    cond'  = wrap $ transexpr cond
+    ssthen' = compoundstmt ssthen
+    sselse' = compoundstmt sselse
+
+switchstmt :: Expr -> [Case] -> C.Stmt
+switchstmt cond cs = C.StmtSelect $ C.SelectSwitch cond' cs' where
+  cond' = wrap $ transexpr cond
+  cs'   = casestmt cs
+
+whilestmt :: Expr -> [Stmt] -> C.Stmt
+whilestmt cond ss = C.StmtIter $ C.IterWhile cond' ss' where
+  cond' = wrap $ transexpr cond
+  ss'   = compoundstmt ss
+
+forstmt :: Maybe Expr -> Maybe Expr -> Maybe Expr -> [Stmt] -> C.Stmt
+forstmt start end step ss =
+  C.StmtIter $ C.IterForUpdate start' end' step' ss' where
+    start' = (wrap.transexpr) <$> start
+    end'   = (wrap.transexpr) <$> end
+    step'  = (wrap.transexpr) <$> step
+    ss'    = compoundstmt ss
+
+labelstmt :: String -> Stmt -> C.Stmt
+labelstmt name s = C.StmtLabeled $ C.LabeledIdent (ident name) (transstmt s)
+
+returnstmt :: Maybe Expr -> C.Stmt
+returnstmt e = C.StmtJump $ C.JumpReturn ((wrap.transexpr) <$> e)
+
+casestmt :: [Case] -> C.Stmt
+casestmt cs =
+  C.StmtCompound $ C.Compound (Just $ fromList $ map casestmt' cs) where
+    casestmt' cs = C.BlockItemStmt $ C.StmtLabeled $ case cs of
+      Case  e s -> C.LabeledCase (C.Const $ wrap $ transexpr e) (transstmt s)
+      Default s -> C.LabeledDefault (transstmt s)
+
+compoundstmt :: [Stmt] -> C.Stmt
+compoundstmt ss = C.StmtCompound $ C.Compound (Just $ fromList ss') where
+  ss' = map (C.BlockItemStmt . transstmt) ss
