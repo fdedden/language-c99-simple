@@ -17,7 +17,9 @@ data TransUnit = TransUnit [ExtDecln]
 data ExtDecln = ExtFun FunDef
               | ExtDecln Decln
 
-data FunDef -- TODO
+data FunDef = FunDef Type Ident [Param] [Decln] [Stmt]
+
+data Param = Param Type Ident
 
 data Decln = Decln (Maybe StorageSpec) Type Ident Init
 
