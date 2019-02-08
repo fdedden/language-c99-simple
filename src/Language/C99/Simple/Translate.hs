@@ -22,7 +22,14 @@ transextdecln (ExtFun   fd) = C.ExtFun   $ transfundef fd
 transextdecln (ExtDecln ed) = C.ExtDecln $ transdecln  ed
 
 transfundef :: FunDef -> C.FunDef
-transfundef = undefined -- TODO
+transfundef (FunDef ty name params decln ss) =
+  C.FunDef dspecs declr params' body where
+    dspecs  = getdeclnspecs ty
+    declr   = execState (getdeclr ty) (identdeclr name)
+    body    = compound decln ss
+    params' = case params of
+      [] -> Nothing
+      xs -> Just $ fromList $ map transparam xs
 
 transdecln :: Decln -> C.Decln
 transdecln (Decln storespec ty name init) = C.Decln dspecs dlist where
@@ -31,6 +38,11 @@ transdecln (Decln storespec ty name init) = C.Decln dspecs dlist where
   declr = execState (getdeclr ty) (identdeclr name)
   init' = transinit init
 
+transparam :: Param -> C.Decln
+transparam (Param ty name) = C.Decln dspecs dlist where
+  dspecs = getdeclnspecs ty
+  dlist  = Just $ C.InitDeclrBase $ C.InitDeclr declr
+  declr  = execState (getdeclr ty) (identdeclr name)
 
 getdeclr :: Type -> State C.Declr ()
 getdeclr ty = case ty of
@@ -280,14 +292,14 @@ exprstmt e = C.StmtExpr   $ C.ExprStmt (Just $ wrap $ transexpr e)
 ifstmt :: Expr -> [Stmt] -> C.Stmt
 ifstmt cond ss = C.StmtSelect $ C.SelectIf cond' body where
   cond' = wrap $ transexpr cond
-  body  = compoundstmt ss
+  body  = compoundstmt [] ss
 
 ifelsestmt :: Expr -> [Stmt] -> [Stmt] -> C.Stmt
 ifelsestmt cond ssthen sselse =
   C.StmtSelect $ C.SelectIfElse cond' ssthen' sselse' where
     cond'  = wrap $ transexpr cond
-    ssthen' = compoundstmt ssthen
-    sselse' = compoundstmt sselse
+    ssthen' = compoundstmt [] ssthen
+    sselse' = compoundstmt [] sselse
 
 switchstmt :: Expr -> [Case] -> C.Stmt
 switchstmt cond cs = C.StmtSelect $ C.SelectSwitch cond' cs' where
@@ -297,7 +309,7 @@ switchstmt cond cs = C.StmtSelect $ C.SelectSwitch cond' cs' where
 whilestmt :: Expr -> [Stmt] -> C.Stmt
 whilestmt cond ss = C.StmtIter $ C.IterWhile cond' ss' where
   cond' = wrap $ transexpr cond
-  ss'   = compoundstmt ss
+  ss'   = compoundstmt [] ss
 
 forstmt :: Maybe Expr -> Maybe Expr -> Maybe Expr -> [Stmt] -> C.Stmt
 forstmt start end step ss =
@@ -305,7 +317,7 @@ forstmt start end step ss =
     start' = (wrap.transexpr) <$> start
     end'   = (wrap.transexpr) <$> end
     step'  = (wrap.transexpr) <$> step
-    ss'    = compoundstmt ss
+    ss'    = compoundstmt [] ss
 
 labelstmt :: String -> Stmt -> C.Stmt
 labelstmt name s = C.StmtLabeled $ C.LabeledIdent (ident name) (transstmt s)
@@ -320,6 +332,11 @@ casestmt cs =
       Case  e s -> C.LabeledCase (C.Const $ wrap $ transexpr e) (transstmt s)
       Default s -> C.LabeledDefault (transstmt s)
 
-compoundstmt :: [Stmt] -> C.Stmt
-compoundstmt ss = C.StmtCompound $ C.Compound (Just $ fromList ss') where
+compound :: [Decln] -> [Stmt] -> C.CompoundStmt
+compound ds ss = C.Compound (Just $ fromList items) where
+  items = ds' ++ ss'
   ss' = map (C.BlockItemStmt . transstmt) ss
+  ds' = map (C.BlockItemDecln . transdecln) ds
+
+compoundstmt :: [Decln] -> [Stmt] -> C.Stmt
+compoundstmt ds ss = C.StmtCompound $ compound ds ss
