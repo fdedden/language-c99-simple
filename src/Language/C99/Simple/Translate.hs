@@ -15,7 +15,11 @@ import Language.C99.Simple.Util
 translate = transtransunit
 
 transtransunit :: TransUnit -> C.TransUnit
-transtransunit (TransUnit decln) = undefined -- TODO
+transtransunit (TransUnit declns) = fromList $ map transextdecln declns
+
+transextdecln :: ExtDecln -> C.ExtDecln
+transextdecln (ExtFun   fd) = C.ExtFun   $ transfundef fd
+transextdecln (ExtDecln ed) = C.ExtDecln $ transdecln  ed
 
 transfundef :: FunDef -> C.FunDef
 transfundef = undefined -- TODO
