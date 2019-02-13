@@ -138,6 +138,7 @@ transstructdecln = undefined -- TODO
 transexpr :: Expr -> C.Expr
 transexpr e = case e of
   Ident     i         -> wrap $ C.PrimIdent $ ident i
+  LitBool   b         -> wrap $ litbool   b
   LitInt    i         -> wrap $ litint    i
   LitDouble d         -> wrap $ litdouble d
   LitString s         -> wrap $ litstring s

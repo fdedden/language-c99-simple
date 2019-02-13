@@ -92,6 +92,7 @@ data Init = InitExpr  Expr
           | InitArray [Init]
 
 data Expr = Ident     Ident
+          | LitBool   Bool
           | LitInt    Integer
           | LitDouble Double
           | LitString String
