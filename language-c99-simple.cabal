@@ -19,7 +19,8 @@ library
   exposed-modules:    Language.C99.Simple,
                       Language.C99.Simple.AST
                       Language.C99.Simple.Translate,
-                      Language.C99.Simple.Util
+                      Language.C99.Simple.Util,
+                      Language.C99.Simple.Expr
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.10 && <5,
