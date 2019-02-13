@@ -10,6 +10,8 @@
 
 module Language.C99.Simple.AST where
 
+import Prelude hiding (LT, GT)
+
 type Ident    = String
 
 data TransUnit = TransUnit [ExtDecln]
@@ -127,12 +129,12 @@ data BinaryOp = Mult
               | Sub
               | ShiftL
               | ShiftR
-              | Lessthan
-              | GreaterThan
-              | LessThanEq
-              | GreaterThanEq
-              | Equal
-              | NotEqual
+              | LT
+              | GT
+              | LE
+              | GE
+              | Eq
+              | NEq
               | And
               | XOr
               | Or

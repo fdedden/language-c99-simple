@@ -1,5 +1,7 @@
 module Language.C99.Simple.Translate where
 
+import Prelude hiding (LT, GT)
+
 import GHC.Exts             (fromList)
 import Control.Monad.State  (State, execState, get, put)
 
@@ -168,24 +170,24 @@ unaryop op e = case op of
 
 binaryop :: BinaryOp -> Expr -> Expr -> C.Expr
 binaryop op e1 e2 = case op of
-    Mult          -> wrap $ C.MultMult   (wrap e1') (wrap e2')
-    Div           -> wrap $ C.MultDiv    (wrap e1') (wrap e2')
-    Mod           -> wrap $ C.MultMod    (wrap e1') (wrap e2')
-    Add           -> wrap $ C.AddPlus    (wrap e1') (wrap e2')
-    Sub           -> wrap $ C.AddMin     (wrap e1') (wrap e2')
-    ShiftL        -> wrap $ C.ShiftLeft  (wrap e1') (wrap e2')
-    ShiftR        -> wrap $ C.ShiftRight (wrap e1') (wrap e2')
-    Lessthan      -> wrap $ C.RelLT      (wrap e1') (wrap e2')
-    GreaterThan   -> wrap $ C.RelGT      (wrap e1') (wrap e2')
-    LessThanEq    -> wrap $ C.RelLE      (wrap e1') (wrap e2')
-    GreaterThanEq -> wrap $ C.RelGE      (wrap e1') (wrap e2')
-    Equal         -> wrap $ C.EqEq       (wrap e1') (wrap e2')
-    NotEqual      -> wrap $ C.EqNEq      (wrap e1') (wrap e2')
-    And           -> wrap $ C.And        (wrap e1') (wrap e2')
-    XOr           -> wrap $ C.XOr        (wrap e1') (wrap e2')
-    Or            -> wrap $ C.Or         (wrap e1') (wrap e2')
-    LAnd          -> wrap $ C.LAnd       (wrap e1') (wrap e2')
-    LOr           -> wrap $ C.LOr        (wrap e1') (wrap e2')
+    Mult   -> wrap $ C.MultMult   (wrap e1') (wrap e2')
+    Div    -> wrap $ C.MultDiv    (wrap e1') (wrap e2')
+    Mod    -> wrap $ C.MultMod    (wrap e1') (wrap e2')
+    Add    -> wrap $ C.AddPlus    (wrap e1') (wrap e2')
+    Sub    -> wrap $ C.AddMin     (wrap e1') (wrap e2')
+    ShiftL -> wrap $ C.ShiftLeft  (wrap e1') (wrap e2')
+    ShiftR -> wrap $ C.ShiftRight (wrap e1') (wrap e2')
+    LT     -> wrap $ C.RelLT      (wrap e1') (wrap e2')
+    GT     -> wrap $ C.RelGT      (wrap e1') (wrap e2')
+    LE     -> wrap $ C.RelLE      (wrap e1') (wrap e2')
+    GE     -> wrap $ C.RelGE      (wrap e1') (wrap e2')
+    Eq     -> wrap $ C.EqEq       (wrap e1') (wrap e2')
+    NEq    -> wrap $ C.EqNEq      (wrap e1') (wrap e2')
+    And    -> wrap $ C.And        (wrap e1') (wrap e2')
+    XOr    -> wrap $ C.XOr        (wrap e1') (wrap e2')
+    Or     -> wrap $ C.Or         (wrap e1') (wrap e2')
+    LAnd   -> wrap $ C.LAnd       (wrap e1') (wrap e2')
+    LOr    -> wrap $ C.LOr        (wrap e1') (wrap e2')
   where
     e1' = transexpr e1
     e2' = transexpr e2
