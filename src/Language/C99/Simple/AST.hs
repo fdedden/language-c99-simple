@@ -96,6 +96,7 @@ data Init = InitExpr  Expr
 data Expr = Ident     Ident
           | LitBool   Bool
           | LitInt    Integer
+          | LitFloat  Float
           | LitDouble Double
           | LitString String
 

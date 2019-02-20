@@ -142,6 +142,7 @@ transexpr e = case e of
   Ident     i         -> wrap $ C.PrimIdent $ ident i
   LitBool   b         -> wrap $ litbool   b
   LitInt    i         -> wrap $ litint    i
+  LitFloat  f         -> wrap $ litfloat  f
   LitDouble d         -> wrap $ litdouble d
   LitString s         -> wrap $ litstring s
   Index     arr idx   -> wrap $ indexexpr arr idx
