@@ -111,6 +111,8 @@ data Expr = Ident     Ident
 
           | BinaryOp BinaryOp Expr Expr
 
+          | Cond Expr Expr Expr
+
           | AssignOp AssignOp Expr Expr
 
 data UnaryOp = Inc

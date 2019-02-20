@@ -153,6 +153,7 @@ transexpr e = case e of
   Cast      ty e      -> wrap $ castexpr ty e
   BinaryOp  op e1 e2  -> binaryop op e1 e2
   AssignOp  op e1 e2  -> wrap $ assignop op e1 e2
+  Cond      c e1 e2   -> wrap $ condexpr c e1 e2
 
 
 unaryop :: UnaryOp -> Expr -> C.UnaryExpr
@@ -243,6 +244,10 @@ funcall fun args = C.PostfixFunction fun' args' where
   exprs :: [C.Expr]
   exprs = map transexpr args
 
+condexpr c e1 e2 = C.Cond c' e1' e2' where
+  c'  = wrap $ transexpr c
+  e1' = wrap $ transexpr e1
+  e2' = wrap $ transexpr e2
 
 transtypename = undefined -- TODO
 
