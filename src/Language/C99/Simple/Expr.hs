@@ -4,6 +4,32 @@ import Prelude hiding (LT, GT)
 
 import Language.C99.Simple.AST
 
+-- Unary Operators
+(.++) :: Expr -> Expr
+(.++) = UnaryOp Inc
+
+(.--) :: Expr -> Expr
+(.--) = UnaryOp Dec
+
+ref :: Expr -> Expr
+ref = UnaryOp Ref
+
+deref :: Expr -> Expr
+deref = UnaryOp DeRef
+
+pos :: Expr -> Expr
+pos = UnaryOp Plus
+
+neg :: Expr -> Expr
+neg = UnaryOp Min
+
+(.~) :: Expr -> Expr
+(.~) = UnaryOp BoolNot
+
+(.!) :: Expr -> Expr
+(.!) = UnaryOp Not
+
+
 -- Binary Operators
 (.*) :: Expr -> Expr -> Expr
 (.*) = BinaryOp Mult
