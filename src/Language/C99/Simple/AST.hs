@@ -14,10 +14,7 @@ import Prelude hiding (LT, GT)
 
 type Ident    = String
 
-data TransUnit = TransUnit [ExtDecln]
-
-data ExtDecln = ExtFun FunDef
-              | ExtDecln Decln
+data TransUnit = TransUnit [Decln] [FunDef]
 
 data FunDef = FunDef Type Ident [Param] [Decln] [Stmt]
 
