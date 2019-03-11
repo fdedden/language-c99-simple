@@ -235,7 +235,9 @@ castexpr ty e = C.Cast ty' e' where
 
 funcall fun args = C.PostfixFunction fun' args' where
   fun'  = wrap $ transexpr fun
-  args' = Just $ fromList argses
+  args' = case argses of
+    [] -> Nothing
+    _  -> Just $ fromList argses
 
   argses :: [C.AssignExpr]
   argses = map wrap exprs
