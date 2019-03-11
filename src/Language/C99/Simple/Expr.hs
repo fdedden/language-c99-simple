@@ -84,3 +84,38 @@ neg = UnaryOp Min
 
 (.||) :: Expr -> Expr -> Expr
 (.||) = BinaryOp LOr
+
+
+-- Assignment operators
+(.=) :: Expr -> Expr -> Expr
+(.=) = AssignOp Assign
+
+(.*=) :: Expr -> Expr -> Expr
+(.*=) = AssignOp AssignMult
+
+(./=) :: Expr -> Expr -> Expr
+(./=) = AssignOp AssignDiv
+
+(.%=) :: Expr -> Expr -> Expr
+(.%=) = AssignOp AssignMod
+
+(.+=) :: Expr -> Expr -> Expr
+(.+=) = AssignOp AssignAdd
+
+(.-=) :: Expr -> Expr -> Expr
+(.-=) = AssignOp AssignSub
+
+(.<<=) :: Expr -> Expr -> Expr
+(.<<=) = AssignOp AssignShiftL
+
+(.>>=) :: Expr -> Expr -> Expr
+(.>>=) = AssignOp AssignShiftR
+
+(.&=) :: Expr -> Expr -> Expr
+(.&=) = AssignOp AssignAnd
+
+(.^=) :: Expr -> Expr -> Expr
+(.^=) = AssignOp AssignXOr
+
+(.|=) :: Expr -> Expr -> Expr
+(.|=) = AssignOp AssignOr
