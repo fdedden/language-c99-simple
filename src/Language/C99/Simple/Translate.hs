@@ -32,11 +32,26 @@ transfundef (FunDef ty name params decln ss) =
       xs -> Just $ fromList $ map transparam xs
 
 transdecln :: Decln -> C.Decln
-transdecln (VarDecln storespec ty name init) = C.Decln dspecs dlist where
+transdecln decln = case decln of
+  FunDecln storespec ty name params -> C.Decln dspecs dlist where
+    dspecs     = getdeclnspecs ty
+    dlist      = Just $ C.InitDeclrBase $ C.InitDeclr declr
+    declr      = execState (getdeclr ty) fundeclr
+    fundeclr   = C.Declr Nothing paramdeclr
+    paramdeclr = C.DirectDeclrFun1 namedeclr paramtypes
+    paramtypes = C.ParamTypeList $ voidparamlist $ map transparamdecln params
+    namedeclr  = C.DirectDeclrIdent $ ident name
+
+  VarDecln storespec ty name init -> C.Decln dspecs dlist where
+    dspecs = getdeclnspecs ty
+    dlist  = Just $ C.InitDeclrBase $ C.InitDeclrInitr declr init'
+    declr  = execState (getdeclr ty) (identdeclr name)
+    init'  = transinit init
+
+transparamdecln :: Param -> C.ParamDecln
+transparamdecln (Param ty name) = C.ParamDecln dspecs declr where
   dspecs = getdeclnspecs ty
-  dlist  = Just $ C.InitDeclrBase $ C.InitDeclrInitr declr init'
-  declr = execState (getdeclr ty) (identdeclr name)
-  init' = transinit init
+  declr  = execState (getdeclr ty) (identdeclr name)
 
 transparam :: Param -> C.Decln
 transparam (Param ty name) = C.Decln dspecs dlist where
