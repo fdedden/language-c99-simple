@@ -32,7 +32,7 @@ transfundef (FunDef ty name params decln ss) =
       xs -> Just $ fromList $ map transparam xs
 
 transdecln :: Decln -> C.Decln
-transdecln (Decln storespec ty name init) = C.Decln dspecs dlist where
+transdecln (VarDecln storespec ty name init) = C.Decln dspecs dlist where
   dspecs = getdeclnspecs ty
   dlist  = Just $ C.InitDeclrBase $ C.InitDeclrInitr declr init'
   declr = execState (getdeclr ty) (identdeclr name)
