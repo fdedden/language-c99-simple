@@ -20,7 +20,7 @@ data FunDef = FunDef Type Ident [Param] [Decln] [Stmt]
 
 data Param = Param Type Ident
 
-data Decln = VarDecln (Maybe StorageSpec) Type Ident Init
+data Decln = VarDecln (Maybe StorageSpec) Type Ident (Maybe Init)
            | FunDecln (Maybe StorageSpec) Type Ident [Param]
 
 data StorageSpec = Typedef

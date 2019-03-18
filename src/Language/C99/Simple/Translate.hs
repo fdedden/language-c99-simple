@@ -44,9 +44,10 @@ transdecln decln = case decln of
 
   VarDecln storespec ty name init -> C.Decln dspecs dlist where
     dspecs = getdeclnspecs ty
-    dlist  = Just $ C.InitDeclrBase $ C.InitDeclrInitr declr init'
+    dlist  = Just $ case init of
+      Nothing  -> C.InitDeclrBase $ C.InitDeclr      declr
+      Just val -> C.InitDeclrBase $ C.InitDeclrInitr declr (transinit val)
     declr  = execState (getdeclr ty) (identdeclr name)
-    init'  = transinit init
 
 transparamdecln :: Param -> C.ParamDecln
 transparamdecln (Param ty name) = C.ParamDecln dspecs declr where
