@@ -79,6 +79,7 @@ getdeclr ty = case ty of
     let lenexpr = (wrap.transexpr) <$> len
     (C.Declr ptr declr) <- get
     put $ C.Declr ptr (C.DirectDeclrArray1 declr Nothing lenexpr)
+    getdeclr ty'
 
   Const    ty' -> getdeclr ty'
   Restrict ty' -> getdeclr ty'
