@@ -23,13 +23,11 @@ transtransunit (TransUnit declns fundefs) = fromList (declns' ++ fundefs') where
 
 transfundef :: FunDef -> C.FunDef
 transfundef (FunDef ty name params decln ss) =
-  C.FunDef dspecs declr params' body where
-    dspecs  = getdeclnspecs ty
-    declr   = execState (getdeclr ty) (identdeclr name)
-    body    = compound decln ss
-    params' = case params of
-      [] -> Nothing
-      xs -> Just $ fromList $ map transparam xs
+  C.FunDef dspecs declr Nothing body where
+    dspecs   = getdeclnspecs ty
+    body     = compound decln ss
+    declr    = execState (getdeclr ty) fundeclr
+    fundeclr = C.Declr Nothing (fundirectdeclr name params)
 
 transdecln :: Decln -> C.Decln
 transdecln decln = case decln of
@@ -37,10 +35,7 @@ transdecln decln = case decln of
     dspecs     = getdeclnspecs ty
     dlist      = Just $ C.InitDeclrBase $ C.InitDeclr declr
     declr      = execState (getdeclr ty) fundeclr
-    fundeclr   = C.Declr Nothing paramdeclr
-    paramdeclr = C.DirectDeclrFun1 namedeclr paramtypes
-    paramtypes = C.ParamTypeList $ voidparamlist $ map transparamdecln params
-    namedeclr  = C.DirectDeclrIdent $ ident name
+    fundeclr   = C.Declr Nothing (fundirectdeclr name params)
 
   VarDecln storespec ty name init -> C.Decln dspecs dlist where
     dspecs = getdeclnspecs ty
@@ -366,3 +361,9 @@ compound ds ss = C.Compound (Just $ fromList items) where
 
 compoundstmt :: [Decln] -> [Stmt] -> C.Stmt
 compoundstmt ds ss = C.StmtCompound $ compound ds ss
+
+fundirectdeclr :: Ident -> [Param] -> C.DirectDeclr
+fundirectdeclr name params = C.DirectDeclrFun1 namedeclr params' where
+  namedeclr = C.DirectDeclrIdent $ ident name
+  params'   = C.ParamTypeList $ voidparamlist $ map transparamdecln params
+
