@@ -72,8 +72,11 @@ getdeclr ty = case ty of
 
   Array ty' len -> do
     let lenexpr = (wrap.transexpr) <$> len
-    ddeclr <- get
-    put $ C.Declr Nothing (C.DirectDeclrArray1 (C.DirectDeclrDeclr ddeclr) Nothing lenexpr)
+    C.Declr ptr declr <- get
+    let ddeclr = case ptr of
+          Nothing -> declr
+          Just _  -> C.DirectDeclrDeclr $ C.Declr ptr declr
+    put $ C.Declr Nothing (C.DirectDeclrArray1 ddeclr Nothing lenexpr)
     getdeclr ty'
 
   Const    ty' -> getdeclr ty'
