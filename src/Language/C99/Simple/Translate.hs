@@ -66,9 +66,9 @@ getdeclr ty = case ty of
 
   Ptr       ty' -> do
     let (quals, ty'') = gettypequals ty'
-    getdeclr ty''
     declr <- get
     put $ insertptr (C.PtrBase quals) declr
+    getdeclr ty''
 
   Array ty' len -> do
     let lenexpr = (wrap.transexpr) <$> len
