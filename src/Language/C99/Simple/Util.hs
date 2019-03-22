@@ -52,3 +52,9 @@ foldtypespecs ts = foldtypespecs' (reverse ts) where
   foldtypespecs' (t:ts) = foldl step base ts where
     base     = C.DeclnSpecsType t Nothing
     step x y = C.DeclnSpecsType y (Just x)
+
+-- Decay a type: turn an toplevel array into a pointer, usefull for functions
+-- returning an array.
+decay :: Type -> Type
+decay (Array ty len) = Ptr ty
+decay ty             = ty
