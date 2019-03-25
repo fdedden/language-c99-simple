@@ -143,11 +143,24 @@ spec2spec ts = case ts of
   TypedefName name -> [C.TTypedef $ C.TypedefName $ ident name]
   Struct      name -> [C.TStructOrUnion $ C.StructOrUnionForwDecln C.Struct (ident name)]
   StructDecln name declns -> [C.TStructOrUnion $ C.StructOrUnionDecln C.Struct (ident <$> name) declns'] where
-    declns' = fromList $ map transstructdecln declns
+    declns' = fromList $ map transfielddecln declns
+
+transfielddecln :: FieldDecln -> C.StructDecln
+transfielddecln (FieldDecln ty name) = C.StructDecln quals declrlist where
+  declrlist = C.StructDeclrBase $ C.StructDeclr declr
+  declr = execState (getdeclr ty) (identdeclr name)
+  quals = getspecquals ty
 
 
-transstructdecln = undefined -- TODO
-
+getspecquals :: Type -> C.SpecQualList
+getspecquals ty = case ty of
+  Type     ty'     -> getspecquals ty'
+  TypeSpec ts      -> foldtypequals $ spec2spec ts
+  Ptr      ty'     -> getspecquals ty'
+  Array    ty' len -> getspecquals ty'
+  Const    ty'     -> C.SpecQualQual C.QConst    (Just $ getspecquals ty')
+  Restrict ty'     -> C.SpecQualQual C.QRestrict (Just $ getspecquals ty')
+  Volatile ty'     -> C.SpecQualQual C.QVolatile (Just $ getspecquals ty')
 
 
 transexpr :: Expr -> C.Expr

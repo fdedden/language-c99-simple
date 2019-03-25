@@ -53,6 +53,14 @@ foldtypespecs ts = foldtypespecs' (reverse ts) where
     base     = C.DeclnSpecsType t Nothing
     step x y = C.DeclnSpecsType y (Just x)
 
+-- Takes a list of C.TypeSpec and turns it into a C.SpecQualsList
+foldtypequals :: [C.TypeSpec] -> C.SpecQualList
+foldtypequals ts = foldtypequals' (reverse ts) where
+  foldtypequals' []     = error "SpecQualList can't be empty"
+  foldtypequals' (t:ts) = foldl step base ts where
+    base     = C.SpecQualType t Nothing
+    step x y = C.SpecQualType y (Just x)
+
 -- Decay a type: turn an toplevel array into a pointer, usefull for functions
 -- returning an array.
 decay :: Type -> Type
