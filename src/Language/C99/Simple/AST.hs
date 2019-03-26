@@ -22,6 +22,7 @@ data Param = Param Type Ident
 
 data Decln = VarDecln (Maybe StorageSpec) Type Ident (Maybe Init)
            | FunDecln (Maybe StorageSpec) Type Ident [Param]
+           | TypeDecln Type
 
 data StorageSpec = Typedef
                  | Extern
