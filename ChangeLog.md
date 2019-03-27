@@ -1,5 +1,6 @@
-# Revision history for language-c99
+# Revision history for language-c99-simple
 
-## 0.1.0.0  -- YYYY-mm-dd
+## 0.1.0.0  -- 2019-03-27
 
-* First version. Released on an unsuspecting world.
+* First version. Initial version supporting features needed for copilot.
+  Contains no comments yet.
