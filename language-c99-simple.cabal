@@ -3,7 +3,7 @@
 
 name:                language-c99-simple
 version:             0.1.0.0
-synopsis:            Simplified C-like AST to simplify writing C99 programs.
+synopsis:            C-like AST to simplify writing C99 programs.
 description:
   This package is a wrapper on top of 'language-c99'. It provides a simpler
   interface more suited for writing C99 programs. It achieves this by
