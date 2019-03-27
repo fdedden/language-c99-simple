@@ -3,8 +3,13 @@
 
 name:                language-c99-simple
 version:             0.1.0.0
--- synopsis:            
--- description:         
+synopsis:            Simplified C-like AST to simplify writing C99 programs.
+description:
+  This package is a wrapper on top of 'language-c99'. It provides a simpler
+  interface more suited for writing C99 programs. It achieves this by
+  implementing its own C-like AST, supporting the most used C features. In
+  turn, this AST is translated into actual C99 one, showing that it is an
+  actual subset.
 license:             MIT
 license-file:        LICENSE
 author:              Frank Dedden
