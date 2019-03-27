@@ -5,7 +5,7 @@ import GHC.Exts (fromList)
 import           Language.C99.Simple.AST
 import qualified Language.C99.AST         as C
 
-import Language.C99.Util.IsList
+import Language.C99.Util
 
 
 -- Append two declaration specs

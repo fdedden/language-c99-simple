@@ -8,10 +8,7 @@ import Control.Monad.State  (State, execState, get, put)
 import           Language.C99.Simple.AST
 import qualified Language.C99.AST         as C
 
-import Language.C99.Util.Expr
-import Language.C99.Util.IsList
-import Language.C99.Util.Wrap
-
+import Language.C99.Util
 import Language.C99.Simple.Util
 
 translate = transtransunit
