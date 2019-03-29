@@ -299,10 +299,13 @@ getabstractdeclr ty = case ty of
 
   Array ty' len -> do
     getabstractdeclr ty'
-    (C.AbstractDeclrDirect ptr adeclr) <- get
-    let len'     = (wrap.transexpr) <$> len
-        arrdeclr = C.DirectAbstractDeclrArray1 (Just adeclr) Nothing len'
-    put $ C.AbstractDeclrDirect ptr arrdeclr
+    declr <- get
+    case declr of
+      C.AbstractDeclrDirect ptr adeclr -> do
+        let len'     = (wrap.transexpr) <$> len
+            arrdeclr = C.DirectAbstractDeclrArray1 (Just adeclr) Nothing len'
+        put $ C.AbstractDeclrDirect ptr arrdeclr
+      _ -> error "This should never happen, contact maintainer if it does."
 
   Const    ty' -> getabstractdeclr ty'
   Restrict ty' -> getabstractdeclr ty'
