@@ -278,39 +278,49 @@ condexpr c e1 e2 = C.Cond c' e1' e2' where
   e1' = wrap $ transexpr e1
   e2' = wrap $ transexpr e2
 
-transtypename = undefined -- TODO
+transtypename :: TypeName -> C.TypeName
+transtypename (TypeName ty) = C.TypeName specquals adeclr where
+  specquals = getspecquals ty
+  adeclr    = execState (getabstractdeclr ty) Nothing
 
-
-getabstractdeclr :: Type -> State C.AbstractDeclr ()
+getabstractdeclr :: Type -> State (Maybe C.AbstractDeclr) ()
 getabstractdeclr ty = case ty of
-  Type ty'    -> do
+  Type ty' -> do
     getabstractdeclr ty'
     adeclr <- get
-    put $ C.AbstractDeclrDirect Nothing (C.DirectAbstractDeclr adeclr)
+    case adeclr of
+      Nothing      -> return ()
+      Just adeclr' -> put $ Just $ C.AbstractDeclrDirect Nothing dadeclr where
+        dadeclr = C.DirectAbstractDeclr adeclr'
 
   TypeSpec ts -> return ()
 
   Ptr ty' -> do
     let (quals, ty'') = gettypequals ty'
-    getabstractdeclr ty''
+        ptr           = C.PtrBase quals
     adeclr <- get
-    let ptr = C.PtrBase quals
-    put $ C.AbstractDeclrDirect (Just ptr) (C.DirectAbstractDeclr adeclr)
+    case adeclr of
+      Nothing      -> put $ Just $ C.AbstractDeclr ptr
+      Just adeclr' -> put $ Just $ C.AbstractDeclrDirect (Just ptr) dadeclr where
+        dadeclr = C.DirectAbstractDeclr adeclr'
+    getabstractdeclr ty''
 
   Array ty' len -> do
+    let lenexpr       = (wrap.transexpr) <$> len
+        emptyarrdeclr = C.DirectAbstractDeclrArray1 Nothing Nothing lenexpr
+    adeclr <- get
+    let declr = case adeclr of
+          Nothing -> C.AbstractDeclrDirect Nothing emptyarrdeclr
+          Just adeclr -> case adeclr of
+            C.AbstractDeclrDirect mptr adeclr' -> C.AbstractDeclrDirect mptr arrdeclr where
+              arrdeclr = C.DirectAbstractDeclrArray1 (Just adeclr') Nothing lenexpr
+            C.AbstractDeclr ptr -> C.AbstractDeclrDirect (Just ptr) emptyarrdeclr
+    put $ Just declr
     getabstractdeclr ty'
-    declr <- get
-    case declr of
-      C.AbstractDeclrDirect ptr adeclr -> do
-        let len'     = (wrap.transexpr) <$> len
-            arrdeclr = C.DirectAbstractDeclrArray1 (Just adeclr) Nothing len'
-        put $ C.AbstractDeclrDirect ptr arrdeclr
-      _ -> error "This should never happen, contact maintainer if it does."
 
   Const    ty' -> getabstractdeclr ty'
   Restrict ty' -> getabstractdeclr ty'
   Volatile ty' -> getabstractdeclr ty'
-
 
 transstmt :: Stmt -> C.Stmt
 transstmt stmt = case stmt of
