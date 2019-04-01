@@ -278,7 +278,10 @@ condexpr c e1 e2 = C.Cond c' e1' e2' where
   e1' = wrap $ transexpr e1
   e2' = wrap $ transexpr e2
 
-transtypename = undefined -- TODO
+transtypename :: TypeName -> C.TypeName
+transtypename (TypeName ty) = C.TypeName specquals adeclr where
+  specquals = getspecquals ty
+  adeclr    = execState (getabstractdeclr ty) Nothing
 
 getabstractdeclr :: Type -> State (Maybe C.AbstractDeclr) ()
 getabstractdeclr ty = case ty of
