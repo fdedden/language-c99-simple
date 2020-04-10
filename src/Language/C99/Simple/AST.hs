@@ -97,7 +97,9 @@ data TypeSpec = Void
 data FieldDecln = FieldDecln Type Ident
 
 data Init = InitExpr  Expr
-          | InitArray [Init]
+          | InitMultiple (NonEmpty InitItem)
+
+data InitItem = InitItem (Maybe Ident) Init
 
 data Expr = Ident     Ident
           | LitBool   Bool
@@ -110,7 +112,7 @@ data Expr = Ident     Ident
           | Funcall Expr [Expr]
           | Dot     Expr Ident
           | Arrow   Expr Ident
-          | InitVal TypeName [Init]
+          | InitVal TypeName (NonEmpty InitItem)
 
           | UnaryOp UnaryOp Expr
 

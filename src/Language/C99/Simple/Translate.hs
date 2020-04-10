@@ -275,11 +275,27 @@ assignop op e1 e2 = C.Assign e1' op' e2' where
 
 transinit :: Init -> C.Init
 transinit (InitExpr e)   = C.InitExpr (wrap $ transexpr e)
-transinit (InitArray es) = C.InitArray (fromList $ map transinit es)
+transinit (InitMultiple es) = C.InitArray (transinitlist es)
 
-initexpr ty init = C.PostfixInits ty' init' where
-  ty'   = transtypename ty
-  init' = fromList $ map transinit init
+transinitlist :: NonEmpty InitItem -> C.InitList
+transinitlist (InitItem mident x NE.:| [])     = C.InitBase
+  (transdesigr <$> mident) (transinit x)
+transinitlist (InitItem mident x NE.:| (y:zs)) = C.InitCons
+  (transinitlist (y NE.:| zs)) (transdesigr <$> mident) (transinit x)
+
+transdesigr :: Ident -> C.Design
+transdesigr = C.Design . C.DesigrBase . C.DesigrIdent . ident
+
+initexpr :: TypeName -> NonEmpty InitItem -> C.PostfixExpr
+initexpr ty inits = C.PostfixInits ty' inits' where
+  ty'    = transtypename ty
+  inits' = transinititems inits
+
+transinititems :: NonEmpty InitItem -> C.InitList
+transinititems (InitItem mident init NE.:| []) =
+  C.InitBase ((C.Design . C.DesigrBase . C.DesigrIdent . ident) <$> mident) (transinit init)
+transinititems (InitItem mident init NE.:| (x:xs)) =
+  C.InitCons (transinititems (x NE.:| xs)) ((C.Design . C.DesigrBase . C.DesigrIdent . ident) <$> mident) (transinit init)
 
 indexexpr arr idx = C.PostfixIndex arr' idx' where
   arr' = wrap $ transexpr arr
