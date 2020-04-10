@@ -11,6 +11,7 @@
 module Language.C99.Simple.AST where
 
 import Prelude hiding (LT, GT)
+import Data.List.NonEmpty (NonEmpty)
 
 type Ident    = String
 
@@ -85,7 +86,13 @@ data TypeSpec = Void
               | TypedefName Ident
 
               | Struct      Ident
-              | StructDecln (Maybe Ident) [FieldDecln]
+              | StructDecln (Maybe Ident) (NonEmpty FieldDecln)
+
+              | Union      Ident
+              | UnionDecln (Maybe Ident) (NonEmpty FieldDecln)
+
+              | Enum      Ident
+              | EnumDecln (Maybe Ident) (NonEmpty Ident)
 
 data FieldDecln = FieldDecln Type Ident
 

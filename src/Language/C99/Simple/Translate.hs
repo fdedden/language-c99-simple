@@ -4,6 +4,8 @@ import Prelude hiding (LT, GT)
 
 import GHC.Exts             (fromList)
 import Control.Monad.State  (State, execState, get, put)
+import Data.List.NonEmpty (NonEmpty)
+import qualified Data.List.NonEmpty as NE
 
 import           Language.C99.Simple.AST
 import qualified Language.C99.AST         as C
@@ -157,7 +159,19 @@ spec2spec ts = case ts of
   TypedefName name -> [C.TTypedef $ C.TypedefName $ ident name]
   Struct      name -> [C.TStructOrUnion $ C.StructOrUnionForwDecln C.Struct (ident name)]
   StructDecln name declns -> [C.TStructOrUnion $ C.StructOrUnionDecln C.Struct (ident <$> name) declns'] where
-    declns' = fromList $ map transfielddecln declns
+    declns' = transfielddeclns declns
+  Union      name -> [C.TStructOrUnion $ C.StructOrUnionForwDecln C.Union (ident name)]
+  UnionDecln name declns -> [C.TStructOrUnion $ C.StructOrUnionDecln C.Union (ident <$> name) declns'] where
+    declns' = transfielddeclns declns
+  Enum      name -> [C.TEnum $ C.EnumSpecForw (ident name)]
+  EnumDecln name declns -> [C.TEnum $ C.EnumSpec (ident <$> name) declns'] where
+    declns' = transvariantdeclns declns
+
+transfielddeclns :: NonEmpty FieldDecln -> C.StructDeclnList
+transfielddeclns (decln NE.:| []) = C.StructDeclnBase (transfielddecln decln)
+transfielddeclns (decln NE.:| (d : ds)) = C.StructDeclnCons
+  (transfielddeclns (d NE.:| ds))
+  (transfielddecln decln)
 
 transfielddecln :: FieldDecln -> C.StructDecln
 transfielddecln (FieldDecln ty name) = C.StructDecln quals declrlist where
@@ -165,6 +179,14 @@ transfielddecln (FieldDecln ty name) = C.StructDecln quals declrlist where
   declr = execState (getdeclr ty) (identdeclr name)
   quals = getspecquals ty
 
+transvariantdeclns :: NonEmpty Ident -> C.EnumrList
+transvariantdeclns (decln NE.:| []) = C.EnumrBase (transvariantdecln decln)
+transvariantdeclns (decln NE.:| (d : ds)) = C.EnumrCons
+  (transvariantdeclns (d NE.:| ds))
+  (transvariantdecln decln)
+
+transvariantdecln :: Ident -> C.Enumr
+transvariantdecln name = C.Enumr (C.Enum (ident name))
 
 getspecquals :: Type -> C.SpecQualList
 getspecquals ty = case ty of
