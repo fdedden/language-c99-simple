@@ -274,8 +274,8 @@ assignop op e1 e2 = C.Assign e1' op' e2' where
     AssignOr     -> C.AOr
 
 transinit :: Init -> C.Init
-transinit (InitExpr e)   = C.InitExpr (wrap $ transexpr e)
-transinit (InitMultiple es) = C.InitArray (transinitlist es)
+transinit (InitExpr e)  = C.InitExpr (wrap $ transexpr e)
+transinit (InitList es) = C.InitArray (transinitlist es)
 
 transinitlist :: NonEmpty InitItem -> C.InitList
 transinitlist (InitItem mident x NE.:| [])     = C.InitBase

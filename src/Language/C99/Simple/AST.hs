@@ -96,8 +96,8 @@ data TypeSpec = Void
 
 data FieldDecln = FieldDecln Type Ident
 
-data Init = InitExpr  Expr
-          | InitMultiple (NonEmpty InitItem)
+data Init = InitExpr Expr
+          | InitList (NonEmpty InitItem)
 
 data InitItem = InitItem (Maybe Ident) Init
 
