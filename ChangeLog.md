@@ -1,6 +1,6 @@
 # Revision history for language-c99-simple
 
-## ... -- 2022-02-22
+## 0.2.0 -- 2022-05-21
 
 * Added support for initializers with designators.
 * Added support for enum and union.
