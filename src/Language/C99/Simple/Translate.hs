@@ -168,10 +168,10 @@ spec2spec ts = case ts of
     declns' = transvariantdeclns declns
 
 transfielddeclns :: NonEmpty FieldDecln -> C.StructDeclnList
-transfielddeclns (decln NE.:| []) = C.StructDeclnBase (transfielddecln decln)
-transfielddeclns (decln NE.:| (d : ds)) = C.StructDeclnCons
-  (transfielddeclns (d NE.:| ds))
-  (transfielddecln decln)
+transfielddeclns (decln NE.:| declns) = foldl step (base decln) declns
+  where
+    base d    = C.StructDeclnBase (transfielddecln d)
+    step ds d = C.StructDeclnCons ds (transfielddecln d)
 
 transfielddecln :: FieldDecln -> C.StructDecln
 transfielddecln (FieldDecln ty name) = C.StructDecln quals declrlist where
@@ -180,10 +180,10 @@ transfielddecln (FieldDecln ty name) = C.StructDecln quals declrlist where
   quals = getspecquals ty
 
 transvariantdeclns :: NonEmpty Ident -> C.EnumrList
-transvariantdeclns (decln NE.:| []) = C.EnumrBase (transvariantdecln decln)
-transvariantdeclns (decln NE.:| (d : ds)) = C.EnumrCons
-  (transvariantdeclns (d NE.:| ds))
-  (transvariantdecln decln)
+transvariantdeclns (decln NE.:| declns) = foldl step (base decln) declns
+  where
+    base d    = C.EnumrBase (transvariantdecln d)
+    step ds d = C.EnumrCons ds (transvariantdecln d)
 
 transvariantdecln :: Ident -> C.Enumr
 transvariantdecln name = C.Enumr (C.Enum (ident name))
@@ -278,10 +278,10 @@ transinit (InitExpr e)  = C.InitExpr (wrap $ transexpr e)
 transinit (InitList es) = C.InitList (transinitlist es)
 
 transinitlist :: NonEmpty InitItem -> C.InitList
-transinitlist (InitItem mident x NE.:| [])     = C.InitBase
-  (transdesigr <$> mident) (transinit x)
-transinitlist (InitItem mident x NE.:| (y:zs)) = C.InitCons
-  (transinitlist (y NE.:| zs)) (transdesigr <$> mident) (transinit x)
+transinitlist (x NE.:| xs) = foldl step (base x) xs
+  where
+    base (InitItem mident y)    = C.InitBase    (transdesigr <$> mident) (transinit y)
+    step ys (InitItem mident y) = C.InitCons ys (transdesigr <$> mident) (transinit y)
 
 transdesigr :: Ident -> C.Design
 transdesigr = C.Design . C.DesigrBase . C.DesigrIdent . ident
@@ -292,10 +292,7 @@ initexpr ty inits = C.PostfixInits ty' inits' where
   inits' = transinititems inits
 
 transinititems :: NonEmpty InitItem -> C.InitList
-transinititems (InitItem mident init NE.:| []) =
-  C.InitBase ((C.Design . C.DesigrBase . C.DesigrIdent . ident) <$> mident) (transinit init)
-transinititems (InitItem mident init NE.:| (x:xs)) =
-  C.InitCons (transinititems (x NE.:| xs)) ((C.Design . C.DesigrBase . C.DesigrIdent . ident) <$> mident) (transinit init)
+transinititems = transinitlist
 
 indexexpr arr idx = C.PostfixIndex arr' idx' where
   arr' = wrap $ transexpr arr
