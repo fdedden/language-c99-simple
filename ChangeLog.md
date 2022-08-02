@@ -1,5 +1,10 @@
 # Revision history for language-c99-simple
 
+## 0.2.1 -- 2022-08-02
+
+* Fixed a bug where the order of init list was reversed (thanks RyanGlScott!).
+  (#9)
+
 ## 0.2.0 -- 2022-05-21
 
 * Added support for initializers with designators.
