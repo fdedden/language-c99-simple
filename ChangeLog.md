@@ -1,7 +1,8 @@
 # Revision history for language-c99-simple
 
-## 0.2.1 -- 2022-08-02
+## 0.2.1 -- 2022-08-15
 
+* Bump version number for release (#10).
 * Fixed a bug where the order of init list was reversed (thanks RyanGlScott!).
   (#9)
 
