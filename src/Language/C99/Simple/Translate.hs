@@ -217,6 +217,7 @@ transexpr e = case e of
   BinaryOp  op e1 e2  -> binaryop op e1 e2
   AssignOp  op e1 e2  -> wrap $ assignop op e1 e2
   Cond      c e1 e2   -> wrap $ condexpr c e1 e2
+  SizeOf    e         -> wrap $ C.UnarySizeExpr (wrap $ transexpr e)
 
 
 unaryop :: UnaryOp -> Expr -> C.UnaryExpr

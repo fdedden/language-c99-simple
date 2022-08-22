@@ -124,6 +124,8 @@ data Expr = Ident     Ident
 
           | AssignOp AssignOp Expr Expr
 
+          | SizeOf     Expr
+
 data UnaryOp = Inc
              | Dec
              | Ref
