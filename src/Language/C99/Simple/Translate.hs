@@ -201,22 +201,24 @@ getspecquals ty = case ty of
 
 transexpr :: Expr -> C.Expr
 transexpr e = case e of
-  Ident     i         -> wrap $ C.PrimIdent $ ident i
-  LitBool   b         -> wrap $ litbool   b
-  LitInt    i         -> wrap $ litint    i
-  LitFloat  f         -> wrap $ litfloat  f
-  LitDouble d         -> wrap $ litdouble d
-  LitString s         -> wrap $ litstring s
-  Index     arr idx   -> wrap $ indexexpr arr idx
-  Funcall   fun args  -> wrap $ funcall   fun args
-  Dot       e   field -> wrap $ dotexpr   e field
-  Arrow     e   field -> wrap $ arrowexpr e field
-  InitVal   ty  init  -> wrap $ initexpr  ty init
-  UnaryOp   op e      -> wrap $ unaryop op e
-  Cast      ty e      -> wrap $ castexpr ty e
-  BinaryOp  op e1 e2  -> binaryop op e1 e2
-  AssignOp  op e1 e2  -> wrap $ assignop op e1 e2
-  Cond      c e1 e2   -> wrap $ condexpr c e1 e2
+  Ident      i         -> wrap $ C.PrimIdent $ ident i
+  LitBool    b         -> wrap $ litbool   b
+  LitInt     i         -> wrap $ litint    i
+  LitFloat   f         -> wrap $ litfloat  f
+  LitDouble  d         -> wrap $ litdouble d
+  LitString  s         -> wrap $ litstring s
+  Index      arr idx   -> wrap $ indexexpr arr idx
+  Funcall    fun args  -> wrap $ funcall   fun args
+  Dot        e   field -> wrap $ dotexpr   e field
+  Arrow      e   field -> wrap $ arrowexpr e field
+  InitVal    ty  init  -> wrap $ initexpr  ty init
+  UnaryOp    op e      -> wrap $ unaryop op e
+  Cast       ty e      -> wrap $ castexpr ty e
+  BinaryOp   op e1 e2  -> binaryop op e1 e2
+  AssignOp   op e1 e2  -> wrap $ assignop op e1 e2
+  Cond       c e1 e2   -> wrap $ condexpr c e1 e2
+  SizeOf     e         -> wrap $ C.UnarySizeExpr (wrap $ transexpr e)
+  SizeOfType ty        -> wrap $ C.UnarySizeType (transtypename ty)
 
 
 unaryop :: UnaryOp -> Expr -> C.UnaryExpr

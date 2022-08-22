@@ -1,5 +1,10 @@
 # Revision history for language-c99-simple
 
+## 0.2.2 -- TBD
+
+* Added support for `sizeof` (#12).
+
+
 ## 0.2.1 -- 2022-08-15
 
 * Bump version number for release (#10).
