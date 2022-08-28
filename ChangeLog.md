@@ -1,6 +1,6 @@
 # Revision history for language-c99-simple
 
-## 0.2.2 -- TBD
+## 0.2.2 -- 2022-08-28
 
 * Added support for `sizeof` (#12).
 
