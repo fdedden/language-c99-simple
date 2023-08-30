@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                language-c99-simple
-version:             0.2.2
+version:             0.2.3
 synopsis:            C-like AST to simplify writing C99 programs.
 description:
   This package is a wrapper on top of 'language-c99'. It provides a simpler
