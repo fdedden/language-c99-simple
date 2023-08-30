@@ -1,5 +1,9 @@
 # Revision history for language-c99-simple
 
+## 0.2.3 -- 2023-08-30
+
+* Allow building with mtl-2.3.1 (thanks RyanGlScott) (#15).
+
 ## 0.2.2 -- 2022-08-28
 
 * Added support for `sizeof` (#12).
