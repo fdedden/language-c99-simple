@@ -17,7 +17,7 @@ type Ident    = String
 
 data TransUnit = TransUnit [Decln] [FunDef]
 
-data FunDef = FunDef Type Ident [Param] [Decln] [Stmt]
+data FunDef = FunDef (Maybe StorageSpec) Type Ident [Param] [Decln] [Stmt]
 
 data Param = Param Type Ident
 

@@ -21,9 +21,9 @@ transtransunit (TransUnit declns fundefs) = fromList (declns' ++ fundefs') where
   fundefs' = map (C.ExtFun   . transfundef) fundefs
 
 transfundef :: FunDef -> C.FunDef
-transfundef (FunDef ty name params decln ss) =
+transfundef (FunDef storespec ty name params decln ss) =
   C.FunDef dspecs declr Nothing body where
-    dspecs   = getdeclnspecs Nothing ty
+    dspecs   = getdeclnspecs storespec ty
     body     = compound decln ss
     declr    = execState (getdeclr ty) fundeclr
     fundeclr = C.Declr Nothing (fundirectdeclr name params)
