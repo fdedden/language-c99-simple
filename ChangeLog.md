@@ -1,6 +1,6 @@
 # Revision history for language-c99-simple
 
-## 0.3.0 -- TBD
+## 0.3.0 -- 2024-01-03
 
 * Use https instead of git:// for source url (thanks felixonmars) (#24).
 * Extend FunDef with an optional StorageSpec. (thanks ivanperez-keera) (#23).
