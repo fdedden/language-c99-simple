@@ -1,5 +1,9 @@
 # Revision history for language-c99-simple
 
+## 0.3.0 -- TBD
+
+* Extend FunDef with an optional StorageSpec. (thanks ivanperez-keera) (#23).
+
 ## 0.2.3 -- 2023-08-30
 
 * Allow building with mtl-2.3.1 (thanks RyanGlScott) (#15).
