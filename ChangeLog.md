@@ -2,6 +2,7 @@
 
 ## 0.3.0 -- TBD
 
+* Extend FunDef with an optional StorageSpec. (thanks ivanperez-keera) (#23).
 
 ## 0.2.3 -- 2023-08-30
 
